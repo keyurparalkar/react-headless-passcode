@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+.single-input {
+  width: 30px;
+  height: 30px;
+  color: black;
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  border-radius: 3px;
+  border-color: #cacaca;
+  border-width: 1px;
+}
