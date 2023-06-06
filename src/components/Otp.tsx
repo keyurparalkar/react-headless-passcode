@@ -1,8 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 import SingleInput from "./SingleInput";
 
-const getClipboardContent = async () => {
-  return await navigator.clipboard.readText();
+const getClipboardContent = () => {
+  return navigator.clipboard.readText();
 };
 
 export const OtpContext = createContext<{
@@ -14,14 +14,15 @@ export const OtpContext = createContext<{
 });
 
 const Otp = () => {
-  const [arrayValue, setArrayValue] = useState<number[]>([0, 0, 0, 0, 0]);
+  const [arrayValue, setArrayValue] = useState<(string | number)[]>([0, 0, 0, 0, 0]);
   const [currFocusedIndex, setCurrFocusedIndex] = useState(0);
 
   useEffect(() => {
-    window.addEventListener("paste", async () => {
-      const clipboardContent = await getClipboardContent();
-      const newArray = clipboardContent.split("").map((num) => Number(num));
-      setArrayValue(newArray);
+    document.addEventListener("paste", () => {
+      getClipboardContent().then((resolvedValue) => {
+        const newArray = resolvedValue.split("").map((num) => Number(num));
+        setArrayValue(newArray);
+      });
     });
 
     return () => {
@@ -30,6 +31,7 @@ const Otp = () => {
       );
     };
   }, []);
+
   return (
     <>
       <h2>{arrayValue}</h2>

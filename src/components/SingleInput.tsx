@@ -8,10 +8,10 @@ import {
 } from "react";
 
 type InputProps = {
-  value: number;
+  value: number | string;
   index: number;
   currFocusedIndex: number;
-  setArrayValue: Dispatch<SetStateAction<number[]>>;
+  setArrayValue: Dispatch<SetStateAction<(string | number)[]>>;
   setCurrFocusedIndex: Dispatch<SetStateAction<number>>;
 };
 
@@ -23,6 +23,15 @@ const SingleInput = ({
   setCurrFocusedIndex,
 }: InputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const onChange = (e: BaseSyntheticEvent) => {
+    // Change the arrayValue and update only when number key is pressed
+    setArrayValue((preValue: (string | number)[]) => {
+      const newArray = [...preValue];
+      newArray[index] = e.target.value === "" ? "" : parseInt(e.target.value);
+      return newArray;
+    });
+  };
 
   const onFocusChange = (e: BaseSyntheticEvent) => {
     if (index === currFocusedIndex) {
@@ -42,15 +51,6 @@ const SingleInput = ({
       if (parseInt(e.key) && index <= 4) {
         setCurrFocusedIndex(index + 1);
       }
-    }
-
-    // Change the arrayValue and update only when number key is pressed
-    if (parseInt(e.key) || e.key === "Backspace") {
-      setArrayValue((preValue: number[]) => {
-        const newArray = [...preValue];
-        newArray[index] = parseInt(e.key);
-        return newArray;
-      });
     }
   };
 
@@ -81,7 +81,8 @@ const SingleInput = ({
       autoComplete="one-time-code"
       maxLength={1}
       pattern="\d{1}"
-      defaultValue={value}
+      value={String(value)}
+      onChange={onChange}
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
       onFocus={onFocusChange}
