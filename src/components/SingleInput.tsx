@@ -8,13 +8,15 @@ import {
 } from "react";
 
 type InputProps = {
-  value: number;
+  value: number | string;
   index: number;
   currFocusedIndex: number;
-  setArrayValue: Dispatch<SetStateAction<number[]>>;
+  setArrayValue: Dispatch<SetStateAction<(string | number)[]>>;
   setCurrFocusedIndex: Dispatch<SetStateAction<number>>;
 };
+
 const SingleInput = ({
+  value,
   index,
   currFocusedIndex,
   setArrayValue,
@@ -22,10 +24,17 @@ const SingleInput = ({
 }: InputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const onChange = (e: BaseSyntheticEvent) => {
+    // Change the arrayValue and update only when number key is pressed
+    setArrayValue((preValue: (string | number)[]) => {
+      const newArray = [...preValue];
+      newArray[index] = e.target.value === "" ? "" : parseInt(e.target.value);
+      return newArray;
+    });
+  };
+
   const onFocusChange = (e: BaseSyntheticEvent) => {
-    if (index === currFocusedIndex) {
-      setCurrFocusedIndex(index);
-    }
+    setCurrFocusedIndex(index);
   };
 
   const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -36,14 +45,8 @@ const SingleInput = ({
         setCurrFocusedIndex(index - 1);
       }
     } else {
-      // Change the arrayValue and update focus only when number key is pressed
+      // Update focus only when number key is pressed
       if (parseInt(e.key) && index <= 4) {
-        setArrayValue((preValue: number[]) => {
-          const newArray = [...preValue];
-          newArray[index] = parseInt(e.key);
-          return newArray;
-        });
-        // setInputVal(e.key);
         setCurrFocusedIndex(index + 1);
       }
     }
@@ -51,7 +54,12 @@ const SingleInput = ({
 
   // Preventing typing of any other keys except for 1 to 9 And backspace
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (!parseInt(e.key) && e.key !== "Backspace") {
+    if (
+      !parseInt(e.key) &&
+      e.key !== "Backspace" &&
+      e.key !== "Meta" &&
+      e.key !== "v"
+    ) {
       e.preventDefault();
     }
   };
@@ -65,13 +73,14 @@ const SingleInput = ({
   return (
     <input
       className="single-input"
-      key={`index-${index}`}
       ref={inputRef}
       type="text"
       inputMode="numeric"
       autoComplete="one-time-code"
       maxLength={1}
       pattern="\d{1}"
+      value={String(value)}
+      onChange={onChange}
       onKeyDown={onKeyDown}
       onKeyUp={onKeyUp}
       onFocus={onFocusChange}
