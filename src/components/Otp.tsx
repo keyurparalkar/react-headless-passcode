@@ -2,7 +2,9 @@ import { createContext, useEffect, useState } from "react";
 import SingleInput from "./SingleInput";
 
 const getClipboardReadPermission = () => {
-  return navigator.permissions.query({ name: "clipboard-read" });
+  return navigator.permissions.query({
+    name: "clipboard-read" as PermissionName,
+  });
 };
 
 const getClipboardContent = () => {
@@ -34,6 +36,7 @@ const Otp = () => {
       try {
         const newArray = clipboardContent.split("").map((num) => Number(num));
         setArrayValue(newArray);
+        setCurrFocusedIndex(newArray.length - 1);
       } catch (err) {
         console.error(err);
       }
