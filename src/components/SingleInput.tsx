@@ -34,9 +34,7 @@ const SingleInput = ({
   };
 
   const onFocusChange = (e: BaseSyntheticEvent) => {
-    if (index === currFocusedIndex) {
-      setCurrFocusedIndex(index);
-    }
+    setCurrFocusedIndex(index);
   };
 
   const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {

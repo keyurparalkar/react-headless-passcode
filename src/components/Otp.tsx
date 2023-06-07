@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SingleInput from "./SingleInput";
 
 const getClipboardReadPermission = () => {
@@ -11,13 +11,23 @@ const getClipboardContent = () => {
   return navigator.clipboard.readText();
 };
 
-export const OtpContext = createContext<{
-  value: number[];
-  cursorPos: number;
-}>({
-  value: [0, 0, 0, 0, 0],
-  cursorPos: 0,
-});
+/**
+ *
+ * @param arr
+ * @param currentFocusedIndex
+ * This function will return the partially filled array when focused index is apart from 0.
+ * The array before the focused index will be filled with existing values.
+ */
+const getPartialFilledArray = (
+  arr: number[],
+  pastingArr: number[],
+  currentFocusedIndex: number
+) => {
+  const lastIndex = arr.length - 1;
+  const remainingPlaces = lastIndex - currentFocusedIndex;
+  const partialArray = pastingArr.slice(0, remainingPlaces + 1);
+  return [...arr.slice(0, currentFocusedIndex), ...partialArray];
+};
 
 const Otp = () => {
   const [arrayValue, setArrayValue] = useState<(string | number)[]>([
@@ -35,7 +45,18 @@ const Otp = () => {
       const clipboardContent = await getClipboardContent();
       try {
         const newArray = clipboardContent.split("").map((num) => Number(num));
-        setArrayValue(newArray);
+
+        if (currFocusedIndex > 0) {
+          const partiallyFilledArray = getPartialFilledArray(
+            arrayValue as number[],
+            newArray,
+            currFocusedIndex
+          );
+          setArrayValue(partiallyFilledArray);
+        } else {
+          setArrayValue(newArray);
+        }
+
         setCurrFocusedIndex(newArray.length - 1);
       } catch (err) {
         console.error(err);
@@ -47,7 +68,7 @@ const Otp = () => {
         console.log("Removed paste listner")
       );
     };
-  }, []);
+  }, [currFocusedIndex]);
 
   return (
     <>
