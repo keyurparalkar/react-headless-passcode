@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import useOtp from "../hooks/useOtp";
 import SingleInput from "./SingleInput";
 
 const getClipboardReadPermission = () => {
@@ -30,58 +31,24 @@ const getPartialFilledArray = (
 };
 
 const Otp = () => {
-  const [arrayValue, setArrayValue] = useState<(string | number)[]>([
-    0, 0, 0, 0, 0,
-  ]);
-  const [currFocusedIndex, setCurrFocusedIndex] = useState(0);
-
-  useEffect(() => {
-    document.addEventListener("paste", async () => {
-      const copyPermission = await getClipboardReadPermission();
-      if (copyPermission.state === "denied") {
-        throw new Error("Not allowed to read clipboard.");
-      }
-
-      const clipboardContent = await getClipboardContent();
-      try {
-        const newArray = clipboardContent.split("").map((num) => Number(num));
-
-        if (currFocusedIndex > 0) {
-          const partiallyFilledArray = getPartialFilledArray(
-            arrayValue as number[],
-            newArray,
-            currFocusedIndex
-          );
-          setArrayValue(partiallyFilledArray);
-        } else {
-          setArrayValue(newArray);
-        }
-
-        setCurrFocusedIndex(newArray.length - 1);
-      } catch (err) {
-        console.error(err);
-      }
-    });
-
-    return () => {
-      window.removeEventListener("paste", () =>
-        console.log("Removed paste listner")
-      );
-    };
-  }, [currFocusedIndex]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { array, setArray, currentForcusedIndex, setCurrentFocusedIndex, getEventHandlers } =
+    useOtp({ arrayValue: [0, 0, 0, 0, 0], inputRef});
 
   return (
     <>
-      <h2>{arrayValue}</h2>
-      <h3>Focused Index: {currFocusedIndex}</h3>
-      {arrayValue.map((item, index) => (
+      <h2>{array}</h2>
+      <h3>Focused Index: {currentForcusedIndex}</h3>
+      {array.map((item, index) => (
         <SingleInput
           key={`index-${index}`}
+          ref={inputRef}
           index={index}
           value={item}
-          currFocusedIndex={currFocusedIndex}
-          setArrayValue={setArrayValue}
-          setCurrFocusedIndex={setCurrFocusedIndex}
+          currFocusedIndex={currentForcusedIndex}
+          setArrayValue={setArray}
+          setCurrFocusedIndex={setCurrentFocusedIndex}
+          {...getEventHandlers(index)}
         />
       ))}
     </>
