@@ -1,4 +1,4 @@
-import React, {
+import {
   BaseSyntheticEvent,
   KeyboardEvent,
   useEffect,
@@ -13,14 +13,13 @@ import {
 
 type OtpProps = {
   arrayValue: (number | string)[];
-  inputRef: React.RefObject<HTMLInputElement>;
 };
 
 const useOtp = (props: OtpProps) => {
-  const { arrayValue, inputRef } = props;
+  const { arrayValue } = props;
   const [array, setArray] = useState(arrayValue);
   const [currentForcusedIndex, setCurrentFocusedIndex] = useState(0);
-  const [inputIndex, setinputIndex] = useState(0);
+  const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
 
   const getEventHandlers = (index: number) => {
     const onChange = (e: BaseSyntheticEvent) => {
@@ -32,8 +31,9 @@ const useOtp = (props: OtpProps) => {
       });
     };
 
-    const onFocusChange = (e: BaseSyntheticEvent) => {
+    const onFocus = (e: BaseSyntheticEvent) => {
       setCurrentFocusedIndex(index);
+      e.target.focus();
     };
 
     const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -42,14 +42,31 @@ const useOtp = (props: OtpProps) => {
           setCurrentFocusedIndex(0);
         } else {
           setCurrentFocusedIndex(index - 1);
+          if (
+            inputRefs &&
+            inputRefs.current &&
+            index === currentForcusedIndex
+          ) {
+            inputRefs.current[index - 1].focus();
+          }
         }
       } else {
-        // Update focus only when number key is pressed
-        if (parseInt(e.key) && index <= 4) {
+        /**
+         * Update focus only when number key is pressed
+         * We do a -2 below because we don't want the last input to update the currentFocusedIndex
+         * If we allow it then we get array out of bound error.
+         * */
+        if (parseInt(e.key) && index <= array.length - 2) {
           setCurrentFocusedIndex(index + 1);
+          if (
+            inputRefs &&
+            inputRefs.current &&
+            index === currentForcusedIndex
+          ) {
+            inputRefs.current[index + 1].focus();
+          }
         }
       }
-      setinputIndex(index);
     };
 
     // Preventing typing of any other keys except for 1 to 9 And backspace
@@ -67,16 +84,10 @@ const useOtp = (props: OtpProps) => {
     return {
       onKeyUp,
       onKeyDown,
-      onFocusChange,
+      onFocus,
       onChange,
     };
   };
-
-  useEffect(() => {
-    if (inputRef && inputRef.current && inputIndex === currentForcusedIndex) {
-      inputRef.current.focus();
-    }
-  }, [currentForcusedIndex, inputIndex]);
 
   useEffect(() => {
     document.addEventListener("paste", async () => {
@@ -87,11 +98,12 @@ const useOtp = (props: OtpProps) => {
 
       const clipboardContent = await getClipboardContent();
       try {
+        // We convert the clipboard conent into an array of number;
         const newArray = clipboardContent.split("").map((num) => Number(num));
 
         if (currentForcusedIndex > 0) {
           const partiallyFilledArray = getPartialFilledArray(
-            arrayValue as number[],
+            array as number[],
             newArray,
             currentForcusedIndex
           );
@@ -101,6 +113,7 @@ const useOtp = (props: OtpProps) => {
         }
 
         setCurrentFocusedIndex(newArray.length - 1);
+        inputRefs.current[newArray.length - 1].focus();
       } catch (err) {
         console.error(err);
       }
@@ -111,7 +124,7 @@ const useOtp = (props: OtpProps) => {
         console.log("Removed paste listner")
       );
     };
-  }, [currentForcusedIndex]);
+  }, [currentForcusedIndex, array]);
 
   return {
     array,
@@ -119,6 +132,7 @@ const useOtp = (props: OtpProps) => {
     currentForcusedIndex,
     setCurrentFocusedIndex,
     getEventHandlers,
+    refs: inputRefs,
   };
 };
 
