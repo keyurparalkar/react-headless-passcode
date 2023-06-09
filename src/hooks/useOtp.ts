@@ -13,10 +13,14 @@ import {
 
 type OtpProps = {
   arrayValue: (number | string)[];
+  actions?: {
+    onChange?: () => void;
+    onFocus?: () => void;
+  };
 };
 
 const useOtp = (props: OtpProps) => {
-  const { arrayValue } = props;
+  const { arrayValue, actions } = props;
   const [array, setArray] = useState(arrayValue);
   const [currentForcusedIndex, setCurrentFocusedIndex] = useState(0);
   const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
@@ -32,11 +36,15 @@ const useOtp = (props: OtpProps) => {
         newArray[index] = e.target.value === "" ? "" : parseInt(e.target.value);
         return newArray;
       });
+
+      // execute additional actions
+      if (actions?.onChange) actions?.onChange();
     };
 
     const onFocus = (e: BaseSyntheticEvent) => {
       setCurrentFocusedIndex(index);
       e.target.focus();
+      if (actions?.onFocus) actions?.onFocus();
     };
 
     const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
