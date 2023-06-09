@@ -21,6 +21,9 @@ const useOtp = (props: OtpProps) => {
   const [currentForcusedIndex, setCurrentFocusedIndex] = useState(0);
   const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
 
+  /**
+   * A function that returns the necessary event handlers based on index.
+   */
   const getEventHandlers = (index: number) => {
     const onChange = (e: BaseSyntheticEvent) => {
       // Change the arrayValue and update only when number key is pressed
@@ -101,6 +104,10 @@ const useOtp = (props: OtpProps) => {
         // We convert the clipboard conent into an array of number;
         const newArray = clipboardContent.split("").map((num) => Number(num));
 
+        /**
+         * We start pasting the clipboard content from the currentFocusedIndex with the help of below block.
+         * Pasting of this content is stopped when the last input is reached.
+         **/
         if (currentForcusedIndex > 0) {
           const partiallyFilledArray = getPartialFilledArray(
             array as number[],
@@ -109,9 +116,11 @@ const useOtp = (props: OtpProps) => {
           );
           setArray(partiallyFilledArray);
         } else {
+          // Starts pasting the values in the array from 0th index
           setArray(newArray);
         }
 
+        // Below we update the current focused index and also focus to the last input
         setCurrentFocusedIndex(newArray.length - 1);
         inputRefs.current[newArray.length - 1].focus();
       } catch (err) {
