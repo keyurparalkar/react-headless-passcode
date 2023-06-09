@@ -1,13 +1,15 @@
 import useOtp from "../hooks/useOtp";
 
 const Otp = () => {
-  const { array, currentForcusedIndex, getEventHandlers, refs } = useOtp({
-    arrayValue: [0, 0, 0, 0, 0],
-  });
+  const { array, currentForcusedIndex, getEventHandlers, refs, isComplete } =
+    useOtp({
+      arrayValue: [0, 0, 0, 0, 0],
+    });
 
   return (
     <>
       <h2>{array}</h2>
+      <h3>isComplete: {`${isComplete}`}</h3>
       <h3>Focused Index: {currentForcusedIndex}</h3>
       {array.map((value, index) => {
         const { ...rest } = getEventHandlers(index);

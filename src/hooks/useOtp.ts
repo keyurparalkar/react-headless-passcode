@@ -135,12 +135,15 @@ const useOtp = (props: OtpProps) => {
     };
   }, [currentForcusedIndex, array]);
 
+  const isComplete = array.every((value) => value !== "");
+
   return {
     array,
     setArray,
     currentForcusedIndex,
     setCurrentFocusedIndex,
     getEventHandlers,
+    isComplete,
     refs: inputRefs,
   };
 };
