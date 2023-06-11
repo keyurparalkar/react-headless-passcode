@@ -3,7 +3,7 @@ import useOtp from "../hooks/useOtp";
 const Otp = () => {
   const { array, currentForcusedIndex, getEventHandlers, refs, isComplete } =
     useOtp({
-      arrayValue: [0, 0, 0, 0, 0],
+      arrayValue: [0, 0, 0, 0, 0, 0],
     });
 
   return (

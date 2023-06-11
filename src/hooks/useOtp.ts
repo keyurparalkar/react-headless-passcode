@@ -8,7 +8,7 @@ import {
 import {
   getClipboardContent,
   getClipboardReadPermission,
-  getPartialFilledArray,
+  getFilledArray,
 } from "../utils";
 
 type OtpProps = {
@@ -108,17 +108,12 @@ const useOtp = (props: OtpProps) => {
          * We start pasting the clipboard content from the currentFocusedIndex with the help of below block.
          * Pasting of this content is stopped when the last input is reached.
          **/
-        if (currentForcusedIndex > 0) {
-          const partiallyFilledArray = getPartialFilledArray(
-            array as number[],
-            newArray,
-            currentForcusedIndex
-          );
-          setArray(partiallyFilledArray);
-        } else {
-          // Starts pasting the values in the array from 0th index
-          setArray(newArray);
-        }
+        const filledArray = getFilledArray(
+          array as number[],
+          newArray,
+          currentForcusedIndex
+        );
+        setArray(filledArray);
 
         // Below we update the current focused index and also focus to the last input
         setCurrentFocusedIndex(newArray.length - 1);
