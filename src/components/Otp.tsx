@@ -4,10 +4,6 @@ const Otp = () => {
   const { array, currentForcusedIndex, getEventHandlers, refs, isComplete } =
     useOtp({
       arrayValue: [0, 0, 0, 0, 0],
-      actions: {
-        onChange: () => console.count("Executed onChange via actions"),
-        onFocus: () => console.count("Executed onFocus via actions"),
-      },
     });
 
   return (
