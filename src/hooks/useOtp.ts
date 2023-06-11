@@ -116,8 +116,13 @@ const useOtp = (props: OtpProps) => {
         setArray(filledArray);
 
         // Below we update the current focused index and also focus to the last input
-        setCurrentFocusedIndex(newArray.length - 1);
-        inputRefs.current[newArray.length - 1].focus();
+        if (newArray.length < array.length && currentForcusedIndex === 0) {
+          setCurrentFocusedIndex(newArray.length - 1);
+          inputRefs.current[newArray.length - 1].focus();
+        } else {
+          setCurrentFocusedIndex(array.length - 1);
+          inputRefs.current[array.length - 1].focus();
+        }
       } catch (err) {
         console.error(err);
       }
