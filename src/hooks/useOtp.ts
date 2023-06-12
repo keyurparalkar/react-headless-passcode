@@ -6,17 +6,20 @@ import {
   useState,
 } from "react";
 import {
+  ALPHANUMERIC_REGEX,
   getClipboardContent,
   getClipboardReadPermission,
-  getPartialFilledArray,
+  getFilledArray,
+  shouldPreventDefault,
 } from "../utils";
 
 type OtpProps = {
   arrayValue: (number | string)[];
+  isAlphaNumeric?: boolean;
 };
 
 const useOtp = (props: OtpProps) => {
-  const { arrayValue } = props;
+  const { arrayValue, isAlphaNumeric = false } = props;
   const [array, setArray] = useState(arrayValue);
   const [currentForcusedIndex, setCurrentFocusedIndex] = useState(0);
   const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
@@ -29,7 +32,13 @@ const useOtp = (props: OtpProps) => {
       // Change the arrayValue and update only when number key is pressed
       setArray((preValue: (string | number)[]) => {
         const newArray = [...preValue];
-        newArray[index] = e.target.value === "" ? "" : parseInt(e.target.value);
+
+        if (parseInt(e.target.value)) {
+          newArray[index] = parseInt(e.target.value);
+        } else {
+          newArray[index] = e.target.value;
+        }
+
         return newArray;
       });
     };
@@ -59,7 +68,10 @@ const useOtp = (props: OtpProps) => {
          * We do a -2 below because we don't want the last input to update the currentFocusedIndex
          * If we allow it then we get array out of bound error.
          * */
-        if (parseInt(e.key) && index <= array.length - 2) {
+        if (
+          (isAlphaNumeric ? ALPHANUMERIC_REGEX.test(e.key) : parseInt(e.key)) &&
+          index <= array.length - 2
+        ) {
           setCurrentFocusedIndex(index + 1);
           if (
             inputRefs &&
@@ -74,12 +86,7 @@ const useOtp = (props: OtpProps) => {
 
     // Preventing typing of any other keys except for 1 to 9 And backspace
     const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (
-        !parseInt(e.key) &&
-        e.key !== "Backspace" &&
-        e.key !== "Meta" &&
-        e.key !== "v"
-      ) {
+      if (shouldPreventDefault(e.which, isAlphaNumeric, e.metaKey)) {
         e.preventDefault();
       }
     };
@@ -101,28 +108,30 @@ const useOtp = (props: OtpProps) => {
 
       const clipboardContent = await getClipboardContent();
       try {
-        // We convert the clipboard conent into an array of number;
-        const newArray = clipboardContent.split("").map((num) => Number(num));
-
+        // We convert the clipboard conent into an array of string or number depending upon isAlphaNumeric;
+        let newArray: Array<string | number> = clipboardContent.split("");
+        newArray = isAlphaNumeric
+          ? newArray
+          : newArray.map((num) => Number(num));
         /**
          * We start pasting the clipboard content from the currentFocusedIndex with the help of below block.
          * Pasting of this content is stopped when the last input is reached.
          **/
-        if (currentForcusedIndex > 0) {
-          const partiallyFilledArray = getPartialFilledArray(
-            array as number[],
-            newArray,
-            currentForcusedIndex
-          );
-          setArray(partiallyFilledArray);
-        } else {
-          // Starts pasting the values in the array from 0th index
-          setArray(newArray);
-        }
+        const filledArray = getFilledArray(
+          array,
+          newArray,
+          currentForcusedIndex
+        );
+        setArray(filledArray);
 
         // Below we update the current focused index and also focus to the last input
-        setCurrentFocusedIndex(newArray.length - 1);
-        inputRefs.current[newArray.length - 1].focus();
+        if (newArray.length < array.length && currentForcusedIndex === 0) {
+          setCurrentFocusedIndex(newArray.length - 1);
+          inputRefs.current[newArray.length - 1].focus();
+        } else {
+          setCurrentFocusedIndex(array.length - 1);
+          inputRefs.current[array.length - 1].focus();
+        }
       } catch (err) {
         console.error(err);
       }
@@ -133,7 +142,7 @@ const useOtp = (props: OtpProps) => {
         console.log("Removed paste listner")
       );
     };
-  }, [currentForcusedIndex, array]);
+  }, [currentForcusedIndex, array, isAlphaNumeric]);
 
   const isComplete = array.every((value) => value !== "");
 
