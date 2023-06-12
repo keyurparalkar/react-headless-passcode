@@ -6,17 +6,20 @@ import {
   useState,
 } from "react";
 import {
+  ALPHANUMERIC_REGEX,
   getClipboardContent,
   getClipboardReadPermission,
   getFilledArray,
+  shouldPreventDefault,
 } from "../utils";
 
 type OtpProps = {
   arrayValue: (number | string)[];
+  isAlphaNumeric?: boolean;
 };
 
 const useOtp = (props: OtpProps) => {
-  const { arrayValue } = props;
+  const { arrayValue, isAlphaNumeric = false } = props;
   const [array, setArray] = useState(arrayValue);
   const [currentForcusedIndex, setCurrentFocusedIndex] = useState(0);
   const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
@@ -29,7 +32,13 @@ const useOtp = (props: OtpProps) => {
       // Change the arrayValue and update only when number key is pressed
       setArray((preValue: (string | number)[]) => {
         const newArray = [...preValue];
-        newArray[index] = e.target.value === "" ? "" : parseInt(e.target.value);
+
+        if (parseInt(e.target.value)) {
+          newArray[index] = parseInt(e.target.value);
+        } else {
+          newArray[index] = e.target.value;
+        }
+
         return newArray;
       });
     };
@@ -59,7 +68,10 @@ const useOtp = (props: OtpProps) => {
          * We do a -2 below because we don't want the last input to update the currentFocusedIndex
          * If we allow it then we get array out of bound error.
          * */
-        if (parseInt(e.key) && index <= array.length - 2) {
+        if (
+          (isAlphaNumeric ? ALPHANUMERIC_REGEX.test(e.key) : parseInt(e.key)) &&
+          index <= array.length - 2
+        ) {
           setCurrentFocusedIndex(index + 1);
           if (
             inputRefs &&
@@ -74,12 +86,7 @@ const useOtp = (props: OtpProps) => {
 
     // Preventing typing of any other keys except for 1 to 9 And backspace
     const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (
-        !parseInt(e.key) &&
-        e.key !== "Backspace" &&
-        e.key !== "Meta" &&
-        e.key !== "v"
-      ) {
+      if (shouldPreventDefault(e.which, isAlphaNumeric, e.metaKey)) {
         e.preventDefault();
       }
     };
