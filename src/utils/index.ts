@@ -48,8 +48,8 @@ export const getClipboardContent = () => {
  * The array before the focused index will be filled with existing values.
  */
 export const getFilledArray = (
-  arr: number[],
-  pastingArr: number[],
+  arr: (number | string)[],
+  pastingArr: (number | string)[],
   currentFocusedIndex: number
 ) => {
   const lastIndex = arr.length - 1;

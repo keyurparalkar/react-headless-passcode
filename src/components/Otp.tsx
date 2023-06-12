@@ -4,7 +4,7 @@ const Otp = () => {
   const { array, currentForcusedIndex, getEventHandlers, refs, isComplete } =
     useOtp({
       arrayValue: [0, 0, 0, 0, 0, 0],
-      isAlphaNumeric: true,
+      isAlphaNumeric: false,
     });
 
   return (

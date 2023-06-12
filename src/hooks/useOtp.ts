@@ -108,15 +108,17 @@ const useOtp = (props: OtpProps) => {
 
       const clipboardContent = await getClipboardContent();
       try {
-        // We convert the clipboard conent into an array of number;
-        const newArray = clipboardContent.split("").map((num) => Number(num));
-
+        // We convert the clipboard conent into an array of string or number depending upon isAlphaNumeric;
+        let newArray: Array<string | number> = clipboardContent.split("");
+        newArray = isAlphaNumeric
+          ? newArray
+          : newArray.map((num) => Number(num));
         /**
          * We start pasting the clipboard content from the currentFocusedIndex with the help of below block.
          * Pasting of this content is stopped when the last input is reached.
          **/
         const filledArray = getFilledArray(
-          array as number[],
+          array,
           newArray,
           currentForcusedIndex
         );
@@ -140,7 +142,7 @@ const useOtp = (props: OtpProps) => {
         console.log("Removed paste listner")
       );
     };
-  }, [currentForcusedIndex, array]);
+  }, [currentForcusedIndex, array, isAlphaNumeric]);
 
   const isComplete = array.every((value) => value !== "");
 
