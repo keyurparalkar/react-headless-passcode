@@ -7,11 +7,11 @@ A headless UI for building easy to use OTP component.
 *What is an OTP component?*
 It is a group of input elements with each element only accepting one character. This component is generally used in authentication flows.
 
-* Installation
-* Usage
-* Features
-* API
-* License
+* [Installation](#installation)
+* [Usage](#usage)
+* [Features](#features)
+* [API](#api)
+* [License](#license)
 
 ## Installation
 
@@ -84,12 +84,12 @@ The `useOtp` hook accepts following props
 
 The hook returns an object that consists of:
 
-| Property               	| Type                   	| Description                                                                                                                                                                        	|   	|   	|
-|------------------------	|------------------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|---	|---	|
-| array                  	| `(string \| number)[]` 	| The current array value of the entire component.                                                                                                                                   	|   	|   	|
-| setArray               	| `function`             	| A function that sets the internal state variable:`array`'s value inside the hook.                                                                                                  	|   	|   	|
-| currentFocusedIndex    	|     `number`                   	| Index of the currently focused input element.                                                                                                                                      	|   	|   	|
-| setCurrentFocusedIndex 	|       `function`                 	| A function that sets the internal state variable: `currentFocusedIndex`'s value inside the hook.                                                                                   	|   	|   	|
-| getEventHandler        	|         `function`               	| A function that accepts an index as a parameter. It returns the following event handlers for the input positioned at index `i`: `onChange` `onFocus` `onKeyUp` `onKeyDown` 	|   	|   	|
-| refs                   	|            `React.MutableRefObject<HTMLInputElement[] \| []>`            	| A ref array that contains reference of all the input boxes.                                                                                                                        	|   	|   	|
-| isComplete             	|         `boolean`               	| A boolean flag that tells if all the input boxes are filled or not.                                                                                                                	|   	|   	|
+| Property               	| Type                   	| Description                                                                                                                                                                        	|
+|------------------------	|------------------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+| array                  	| `(string \| number)[]` 	| The current array value of the entire component.                                                                                                                                   	|
+| setArray               	| `function`             	| A function that sets the internal state variable:`array`'s value inside the hook.                                                                                                  	|
+| currentFocusedIndex    	|     `number`                   	| Index of the currently focused input element.                                                                                                                                      	|
+| setCurrentFocusedIndex 	|       `function`                 	| A function that sets the internal state variable: `currentFocusedIndex`'s value inside the hook.                                                                                   	|
+| getEventHandler        	|         `function`               	| A function that accepts an index as a parameter. It returns the following event handlers for the input positioned at index `i`: `onChange` `onFocus` `onKeyUp` `onKeyDown` 	|
+| refs                   	|            `React.MutableRefObject<HTMLInputElement[] \| []>`            	| A ref array that contains reference of all the input boxes.                                                                                                                        	|
+| isComplete             	|         `boolean`               	| A boolean flag that tells if all the input boxes are filled or not.                                                                                                                	|
