@@ -1,46 +1,95 @@
-# Getting Started with Create React App
+![headless-otp-header-image](media/otp-doc-header.001.jpeg)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# react-headless-otp
 
-## Available Scripts
+A headless UI for building easy to use OTP component.
 
-In the project directory, you can run:
+*What is an OTP component?*
+It is a group of input elements with each element only accepting one character. This component is generally used in authentication flows.
 
-### `npm start`
+* [Installation](#installation)
+* [Usage](#usage)
+* [Features](#features)
+* [API](#api)
+* [License](#license)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Installation
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```shell
+yarn add react-headless-otp
+```
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Usage
 
-### `npm run build`
+```tsx
+import { useOtp } from "react-headless-otp";
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+With the `useOtp` hook you just need to pass the `arrayValue` default property and in return you get the `array` in which the actual otp value is stored, various event hanlders that handles the focus management between multiple inputs and `refs` that references each input element.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+For example:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```tsx
+const OTPComponent = () => {
+  const { array, getEventHandlers, refs } = useOtp({
+    arrayValue: [0, 0, 0, 0, 0, 0],
+  });
 
-### `npm run eject`
+  return (
+    <>
+      {array.map((value, index) => {
+        const { ...rest } = getEventHandlers(index);
+        return (
+          <input
+            className="single-input"
+            ref={(el) => el && (refs.current[index] = el)}
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={1}
+            pattern="\d{1}"
+            value={String(value)}
+            key={`index-${index}`}
+            {...rest}
+          />
+        );
+      })}
+    </>
+  );
+};
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+>**NOTE:**
+> It is important to initialize the `refs` object with the current input element because this is how the `useOtp` is able to track the current index and manage the focused state across multiple inputs. Make sure to assign this element to the `refs` or else the focus won't change!!
+```tsx
+ref={(el) => el && (refs.current[index] = el)}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Features
+- Allow entering alpha numeric characters
+- Expose a flag: `isComplete` that tells whether all the input boxes are filled or not
+- Expose a state variable: `currentFocusedIndex`. It tells us the currently focused index of the OTP component.
+- Exposes event handlers that can be seamlessly used with the input element.
+- OTP value can be pasted partially, fully, from start, or from middle.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## API
 
-## Learn More
+The `useOtp` hook accepts following props
+| Prop Name      	| Type                   	| Description                                                           	|   	|   	|
+|----------------	|------------------------	|-----------------------------------------------------------------------	|---	|---	|
+| arrayValue     	| `(number \| string)[]` 	| Default array value that helps to determine the size of the component 	|   	|   	|
+| isAlphaNumeric 	| `boolean`       	| If `true`, allows to enter alpha numeric value in the component       	|   	|   	|
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The hook returns an object that consists of:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+| Property               	| Type                   	| Description                                                                                                                                                                        	|
+|------------------------	|------------------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
+| array                  	| `(string \| number)[]` 	| The current array value of the entire component.                                                                                                                                   	|
+| setArray               	| `function`             	| A function that sets the internal state variable:`array`'s value inside the hook.                                                                                                  	|
+| currentFocusedIndex    	|     `number`                   	| Index of the currently focused input element.                                                                                                                                      	|
+| setCurrentFocusedIndex 	|       `function`                 	| A function that sets the internal state variable: `currentFocusedIndex`'s value inside the hook.                                                                                   	|
+| getEventHandler        	|         `function`               	| A function that accepts an index as a parameter. It returns the following event handlers for the input positioned at index `i`: `onChange` `onFocus` `onKeyUp` `onKeyDown` 	|
+| refs                   	|            `React.MutableRefObject<HTMLInputElement[] \| []>`            	| A ref array that contains reference of all the input boxes.                                                                                                                        	|
+| isComplete             	|         `boolean`               	| A boolean flag that tells if all the input boxes are filled or not.                                                                                                                	|
