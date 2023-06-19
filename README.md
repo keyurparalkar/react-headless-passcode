@@ -93,3 +93,6 @@ The hook returns an object that consists of:
 | getEventHandler        	|         `function`               	| A function that accepts an index as a parameter. It returns the following event handlers for the input positioned at index `i`: `onChange` `onFocus` `onKeyUp` `onKeyDown` 	|
 | refs                   	|            `React.MutableRefObject<HTMLInputElement[] \| []>`            	| A ref array that contains reference of all the input boxes.                                                                                                                        	|
 | isComplete             	|         `boolean`               	| A boolean flag that tells if all the input boxes are filled or not.                                                                                                                	|
+
+## License
+React is [MIT licensed](./LICENSE).
