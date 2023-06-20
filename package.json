@@ -1,6 +1,6 @@
 {
   "name": "react-headless-otp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A headless UI for building easy to use OTP component",
   "keywords": ["otp", "headless-ui", "react"],
   "maintainers": [{
