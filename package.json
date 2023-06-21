@@ -1,6 +1,6 @@
 {
   "name": "react-headless-otp",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "A headless UI for building easy to use OTP component",
   "keywords": [
     "otp",
@@ -24,7 +24,9 @@
   "main": "build/index.js",
   "module": "build/index.js",
   "types": "build/index.d.ts",
-  "files": ["build"],
+  "files": [
+    "build"
+  ],
   "scripts": {
     "build": "rollup -c"
   },
