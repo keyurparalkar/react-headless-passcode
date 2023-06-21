@@ -24,9 +24,7 @@
   "main": "build/index.js",
   "module": "build/index.js",
   "types": "build/index.d.ts",
-  "files": [
-    "*.d.ts, *.js, *.js.map"
-  ],
+  "files": ["build"],
   "scripts": {
     "build": "rollup -c"
   },
