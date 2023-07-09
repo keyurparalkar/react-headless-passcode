@@ -13,12 +13,12 @@ import {
     shouldPreventDefault,
   } from "../utils";
 
-  type OtpProps = {
+  type PasscodeProps = {
     arrayValue: (number | string)[];
     isAlphaNumeric?: boolean;
   };
 
-  const useOtp = (props: OtpProps) => {
+  const usePasscode = (props: PasscodeProps) => {
     const { arrayValue, isAlphaNumeric = false } = props;
     const [array, setArray] = useState(arrayValue);
     const [currentForcusedIndex, setCurrentFocusedIndex] = useState(0);
@@ -157,4 +157,4 @@ import {
     };
   };
 
-  export default useOtp;
+  export default usePasscode;

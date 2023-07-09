@@ -1,9 +1,9 @@
 {
-  "name": "react-headless-otp",
+  "name": "react-headless-passcode",
   "version": "0.1.4",
-  "description": "A headless UI for building easy to use OTP component",
+  "description": "A headless UI for building easy to use passcode component",
   "keywords": [
-    "otp",
+    "passcode",
     "headless-ui",
     "react"
   ],
@@ -13,13 +13,13 @@
       "email": "keur.plkar@gmail.com"
     }
   ],
-  "homepage": "https://github.com/keyurparalkar/react-headless-otp",
+  "homepage": "https://github.com/keyurparalkar/react-headless-passcode",
   "repository": {
-    "url": "https://github.com/keyurparalkar/react-headless-otp",
+    "url": "https://github.com/keyurparalkar/react-headless-passcode",
     "type": "git"
   },
   "bugs": {
-    "url": "https://github.com/keyurparalkar/react-headless-otp/issues"
+    "url": "https://github.com/keyurparalkar/react-headless-passcode/issues"
   },
   "main": "build/index.js",
   "module": "build/index.js",
