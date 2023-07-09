@@ -1,10 +1,10 @@
-![headless-otp-header-image](media/otp-doc-header.001.jpeg)
+![headless-passcode-header-image](media/react-headless-passcode.001.jpeg)
 
-# react-headless-otp
+# react-headless-passcode
 
-A headless UI for building easy to use OTP component.
+A headless UI for building easy to use passcode component.
 
-*What is an OTP component?*
+*What is an passcode component?*
 It is a group of input elements with each element only accepting one character. This component is generally used in authentication flows.
 
 * [Installation](#installation)
@@ -16,23 +16,23 @@ It is a group of input elements with each element only accepting one character. 
 ## Installation
 
 ```shell
-yarn add react-headless-otp
+yarn add react-headless-passcode
 ```
 
 
 ## Usage
 
 ```tsx
-import { useOtp } from "react-headless-otp";
+import { usePasscode } from "react-headless-passcode";
 ```
 
-With the `useOtp` hook you just need to pass the `arrayValue` default property and in return you get the `array` in which the actual otp value is stored, various event hanlders that handles the focus management between multiple inputs and `refs` that references each input element.
+With the `usePasscode` hook you just need to pass the `arrayValue` default property and in return you get the `array` in which the actual passcode value is stored, various event hanlders that handles the focus management between multiple inputs and `refs` that references each input element.
 
 For example:
 
 ```tsx
-const OTPComponent = () => {
-  const { array, getEventHandlers, refs } = useOtp({
+const PasscodeComponent = () => {
+  const { array, getEventHandlers, refs } = usePasscode({
     arrayValue: [0, 0, 0, 0, 0, 0],
   });
 
@@ -62,7 +62,7 @@ const OTPComponent = () => {
 ```
 
 >**NOTE:**
-> It is important to initialize the `refs` object with the current input element because this is how the `useOtp` is able to track the current index and manage the focused state across multiple inputs. Make sure to assign this element to the `refs` or else the focus won't change!!
+> It is important to initialize the `refs` object with the current input element because this is how the `usepasscode` is able to track the current index and manage the focused state across multiple inputs. Make sure to assign this element to the `refs` or else the focus won't change!!
 ```tsx
 ref={(el) => el && (refs.current[index] = el)}
 ```
@@ -70,17 +70,17 @@ ref={(el) => el && (refs.current[index] = el)}
 ## Features
 - Allow entering alpha numeric characters
 - Expose a flag: `isComplete` that tells whether all the input boxes are filled or not
-- Expose a state variable: `currentFocusedIndex`. It tells us the currently focused index of the OTP component.
+- Expose a state variable: `currentFocusedIndex`. It tells us the currently focused index of the passcode component.
 - Exposes event handlers that can be seamlessly used with the input element.
-- OTP value can be pasted partially, fully, from start, or from middle.
+- Passcode value can be pasted partially, fully, from start, or from middle.
 
 ## API
 
-The `useOtp` hook accepts following props
-| Prop Name      	| Type                   	| Description                                                           	|   	|   	|
-|----------------	|------------------------	|-----------------------------------------------------------------------	|---	|---	|
-| arrayValue     	| `(number \| string)[]` 	| Default array value that helps to determine the size of the component 	|   	|   	|
-| isAlphaNumeric 	| `boolean`       	| If `true`, allows to enter alpha numeric value in the component       	|   	|   	|
+The `usePasscode` hook accepts following props
+| Prop Name      	| Type                   	| Description                                                           	|
+|----------------	|------------------------	|-----------------------------------------------------------------------	|
+| arrayValue     	| `(number \| string)[]` 	| Default array value that helps to determine the size of the component 	|
+| isAlphaNumeric 	| `boolean`       	| If `true`, allows to enter alpha numeric value in the component       	|
 
 The hook returns an object that consists of:
 

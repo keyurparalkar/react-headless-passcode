@@ -1,3 +1,3 @@
-import useOtp from "./hook/useOtp";
+import usePasscode from "./hook/usePasscode";
 
-export { useOtp };
+export { usePasscode };
