@@ -77,10 +77,10 @@ ref={(el) => el && (refs.current[index] = el)}
 ## API
 
 The `useOtp` hook accepts following props
-| Prop Name      	| Type                   	| Description                                                           	|   	|   	|
-|----------------	|------------------------	|-----------------------------------------------------------------------	|---	|---	|
-| arrayValue     	| `(number \| string)[]` 	| Default array value that helps to determine the size of the component 	|   	|   	|
-| isAlphaNumeric 	| `boolean`       	| If `true`, allows to enter alpha numeric value in the component       	|   	|   	|
+| Prop Name      	| Type                   	| Description                                                           	|
+|----------------	|------------------------	|-----------------------------------------------------------------------	|
+| arrayValue     	| `(number \| string)[]` 	| Default array value that helps to determine the size of the component 	|
+| isAlphaNumeric 	| `boolean`       	| If `true`, allows to enter alpha numeric value in the component       	|
 
 The hook returns an object that consists of:
 
