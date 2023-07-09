@@ -1,4 +1,4 @@
-![headless-otp-header-image](media/otp-doc-header.001.jpeg)
+![headless-otp-header-image](media/react-headless-passcode.001.jpeg)
 
 # react-headless-otp
 
