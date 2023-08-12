@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useMemo,
 } from "react";
 import {
   ALPHANUMERIC_REGEX,
@@ -14,15 +15,21 @@ import {
 } from "../utils";
 
 type PasscodeProps = {
-  arrayValue: (number | string)[];
+  noOfInputs: number;
   isAlphaNumeric?: boolean;
 };
 
 const usePasscode = (props: PasscodeProps) => {
-  const { arrayValue, isAlphaNumeric = false } = props;
-  const [array, setArray] = useState(arrayValue);
+  const { noOfInputs, isAlphaNumeric = false } = props;
+  const filledArray = useMemo(
+    () => Array(noOfInputs).fill("", 0, noOfInputs),
+    [noOfInputs]
+  );
+  const [array, setArray] = useState(filledArray);
   const [currentFocusedIndex, setCurrentFocusedIndex] = useState(0);
   const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
+
+  const isComplete = array?.every((value: string | number) => value !== "");
 
   /**
    * A function that returns the necessary event handlers based on index.
@@ -135,8 +142,6 @@ const usePasscode = (props: PasscodeProps) => {
       );
     };
   }, [currentFocusedIndex, array, isAlphaNumeric]);
-
-  const isComplete = array.every((value) => value !== "");
 
   return {
     array,
