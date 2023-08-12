@@ -137,7 +137,7 @@ const usePasscode = (props: PasscodeProps) => {
     });
 
     return () => {
-      window.removeEventListener("paste", () =>
+      document.removeEventListener("paste", () =>
         console.log("Removed paste listner")
       );
     };
