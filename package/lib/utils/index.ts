@@ -55,9 +55,10 @@ export const getFilledArray = (
   const lastIndex = arr.length - 1;
 
   if (currentFocusedIndex > 0) {
-    const remainingPlaces = lastIndex - currentFocusedIndex;
-    const partialArray = pastingArr.slice(0, remainingPlaces + 1);
-    return [...arr.slice(0, currentFocusedIndex), ...partialArray];
+    for (let i = currentFocusedIndex; i <= lastIndex; i++) {
+      arr[i] = pastingArr[i - currentFocusedIndex] ?? "";
+    }
+    return arr;
   } else {
     // Starts pasting the values in the array from 0th index
     return [...pastingArr, ...arr.slice(pastingArr.length - 1, lastIndex)];
