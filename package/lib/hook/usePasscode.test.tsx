@@ -5,7 +5,7 @@ import usePasscode from "./usePasscode";
 
 const TestComponent = (props: { isAlphaNumeric: boolean }) => {
     const { array, getEventHandlers, refs } = usePasscode({
-        noOfInputs: 4,
+        count: 4,
         isAlphaNumeric: props.isAlphaNumeric,
     });
 
@@ -31,7 +31,7 @@ const TestComponent = (props: { isAlphaNumeric: boolean }) => {
 
 describe("test basic workflow", () => {
     it("1. test whether passing no. of inputs creates an array of equal number ", () => {
-        const { result } = renderHook(() => usePasscode({ noOfInputs: 4 }));
+        const { result } = renderHook(() => usePasscode({ count: 4 }));
         expect(result.current.array).toHaveLength(4);
     });
 
