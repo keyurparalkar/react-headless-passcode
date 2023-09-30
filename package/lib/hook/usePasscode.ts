@@ -15,13 +15,16 @@ import {
 } from "../utils";
 
 type PasscodeProps = {
-    count: number;
+    count1: number;
     isAlphaNumeric?: boolean;
 };
 
 const usePasscode = (props: PasscodeProps) => {
-    const { count, isAlphaNumeric = false } = props;
-    const filledArray = useMemo(() => Array(count).fill("", 0, count), [count]);
+    const { count1, isAlphaNumeric = false } = props;
+    const filledArray = useMemo(
+        () => Array(count1).fill("", 0, count1),
+        [count1]
+    );
     const [array, setArray] = useState(filledArray);
     const [currentFocusedIndex, setCurrentFocusedIndex] = useState(0);
     const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
