@@ -1,4 +1,4 @@
-name: unit-tests-check
+name: check-unit-tests
 on: push
 jobs:
     build:
