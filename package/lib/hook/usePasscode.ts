@@ -106,52 +106,55 @@ const usePasscode = (props: PasscodeProps) => {
     };
 
     useEffect(() => {
-        document.addEventListener("paste", async () => {
-            const copyPermission = await getClipboardReadPermission();
-            if (copyPermission.state === "denied") {
-                throw new Error("Not allowed to read clipboard.");
-            }
-
-            const clipboardContent = await getClipboardContent();
-            try {
-                // We convert the clipboard conent into an array of string or number depending upon isAlphaNumeric;
-                let newArray: Array<string | number> =
-                    clipboardContent.split("");
-                newArray = isAlphaNumeric
-                    ? newArray
-                    : newArray.map((num) => Number(num));
-                /**
-                 * We start pasting the clipboard content from the currentFocusedIndex with the help of below block.
-                 * Pasting of this content is stopped when the last input is reached.
-                 **/
-                const filledArray = getFilledArray(
-                    array,
-                    newArray,
-                    currentFocusedIndex
-                );
-                setArray(filledArray);
-
-                // Below we update the current focused index and also focus to the last input
-                if (
-                    newArray.length < array.length &&
-                    currentFocusedIndex === 0
-                ) {
-                    setCurrentFocusedIndex(newArray.length - 1);
-                    inputRefs.current[newArray.length - 1].focus();
-                } else {
-                    setCurrentFocusedIndex(array.length - 1);
-                    inputRefs.current[array.length - 1].focus();
+        if (inputRefs.current) {
+            const currentElement = inputRefs.current[currentFocusedIndex];
+            currentElement.addEventListener("paste", async () => {
+                const copyPermission = await getClipboardReadPermission();
+                if (copyPermission.state === "denied") {
+                    throw new Error("Not allowed to read clipboard.");
                 }
-            } catch (err) {
-                console.error(err);
-            }
-        });
 
-        return () => {
-            document.removeEventListener("paste", () =>
-                console.log("Removed paste listner")
-            );
-        };
+                const clipboardContent = await getClipboardContent();
+                try {
+                    // We convert the clipboard conent into an array of string or number depending upon isAlphaNumeric;
+                    let newArray: Array<string | number> =
+                        clipboardContent.split("");
+                    newArray = isAlphaNumeric
+                        ? newArray
+                        : newArray.map((num) => Number(num));
+                    /**
+                     * We start pasting the clipboard content from the currentFocusedIndex with the help of below block.
+                     * Pasting of this content is stopped when the last input is reached.
+                     **/
+                    const filledArray = getFilledArray(
+                        array,
+                        newArray,
+                        currentFocusedIndex
+                    );
+                    setArray(filledArray);
+
+                    // Below we update the current focused index and also focus to the last input
+                    if (
+                        newArray.length < array.length &&
+                        currentFocusedIndex === 0
+                    ) {
+                        setCurrentFocusedIndex(newArray.length - 1);
+                        inputRefs.current[newArray.length - 1].focus();
+                    } else {
+                        setCurrentFocusedIndex(array.length - 1);
+                        inputRefs.current[array.length - 1].focus();
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+
+            return () => {
+                currentElement.removeEventListener("paste", () =>
+                    console.log("Removed paste listner")
+                );
+            };
+        }
     }, [currentFocusedIndex, array, isAlphaNumeric]);
 
     return {
