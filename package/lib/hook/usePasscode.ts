@@ -22,11 +22,13 @@ type PasscodeProps = {
 const usePasscode = (props: PasscodeProps) => {
     const { count, isAlphaNumeric = false } = props;
     const filledArray = useMemo(() => Array(count).fill("", 0, count), [count]);
-    const [array, setArray] = useState(filledArray);
+    const [passcode, setPasscode] = useState(filledArray);
     const [currentFocusedIndex, setCurrentFocusedIndex] = useState(0);
     const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
 
-    const isComplete = array?.every((value: string | number) => value !== "");
+    const isComplete = passcode?.every(
+        (value: string | number) => value !== ""
+    );
 
     /**
      * A function that returns the necessary event handlers based on index.
@@ -34,7 +36,7 @@ const usePasscode = (props: PasscodeProps) => {
     const getEventHandlers = (index: number) => {
         const onChange = (e: BaseSyntheticEvent) => {
             // Change the arrayValue and update only when number key is pressed
-            setArray((preValue: (string | number)[]) => {
+            setPasscode((preValue: (string | number)[]) => {
                 const newArray = [...preValue];
 
                 if (parseInt(e.target.value)) {
@@ -49,7 +51,6 @@ const usePasscode = (props: PasscodeProps) => {
 
         const onFocus = (e: BaseSyntheticEvent) => {
             setCurrentFocusedIndex(index);
-            e.target.focus();
         };
 
         const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -70,13 +71,13 @@ const usePasscode = (props: PasscodeProps) => {
                 /**
                  * Update focus only when number key is pressed
                  * We do a -2 below because we don't want the last input to update the currentFocusedIndex
-                 * If we allow it then we get array out of bound error.
+                 * If we allow it then we get passcode out of bound error.
                  * */
                 if (
                     (isAlphaNumeric
                         ? ALPHANUMERIC_REGEX.test(e.key)
                         : parseInt(e.key)) &&
-                    index <= array.length - 2
+                    index <= passcode.length - 2
                 ) {
                     setCurrentFocusedIndex(index + 1);
                     if (
@@ -116,7 +117,7 @@ const usePasscode = (props: PasscodeProps) => {
 
                 const clipboardContent = await getClipboardContent();
                 try {
-                    // We convert the clipboard conent into an array of string or number depending upon isAlphaNumeric;
+                    // We convert the clipboard conent into an passcode of string or number depending upon isAlphaNumeric;
                     let newArray: Array<string | number> =
                         clipboardContent.split("");
                     newArray = isAlphaNumeric
@@ -127,22 +128,22 @@ const usePasscode = (props: PasscodeProps) => {
                      * Pasting of this content is stopped when the last input is reached.
                      **/
                     const filledArray = getFilledArray(
-                        array,
+                        passcode,
                         newArray,
                         currentFocusedIndex
                     );
-                    setArray(filledArray);
+                    setPasscode(filledArray);
 
                     // Below we update the current focused index and also focus to the last input
                     if (
-                        newArray.length < array.length &&
+                        newArray.length < passcode.length &&
                         currentFocusedIndex === 0
                     ) {
                         setCurrentFocusedIndex(newArray.length - 1);
                         inputRefs.current[newArray.length - 1].focus();
                     } else {
-                        setCurrentFocusedIndex(array.length - 1);
-                        inputRefs.current[array.length - 1].focus();
+                        setCurrentFocusedIndex(passcode.length - 1);
+                        inputRefs.current[passcode.length - 1].focus();
                     }
                 } catch (err) {
                     console.error(err);
@@ -155,11 +156,11 @@ const usePasscode = (props: PasscodeProps) => {
                 );
             };
         }
-    }, [currentFocusedIndex, array, isAlphaNumeric]);
+    }, [currentFocusedIndex, passcode, isAlphaNumeric]);
 
     return {
-        array,
-        setArray,
+        passcode,
+        setPasscode,
         currentFocusedIndex,
         setCurrentFocusedIndex,
         getEventHandlers,
