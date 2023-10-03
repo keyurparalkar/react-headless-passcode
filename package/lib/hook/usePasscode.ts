@@ -93,7 +93,7 @@ const usePasscode = (props: PasscodeProps) => {
 
         // Preventing typing of any other keys except for 1 to 9 And backspace
         const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-            if (shouldPreventDefault(e.which, isAlphaNumeric, e.metaKey)) {
+            if (shouldPreventDefault(e.key, isAlphaNumeric, e.metaKey)) {
                 e.preventDefault();
             }
         };
