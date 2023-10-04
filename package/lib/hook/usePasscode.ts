@@ -1,7 +1,6 @@
 import {
     BaseSyntheticEvent,
     KeyboardEvent,
-    useEffect,
     useRef,
     useState,
     useMemo,
@@ -98,65 +97,56 @@ const usePasscode = (props: PasscodeProps) => {
             }
         };
 
+        const onPaste = async (e: BaseSyntheticEvent) => {
+            const copyPermission = await getClipboardReadPermission();
+            if (copyPermission.state === "denied") {
+                throw new Error("Not allowed to read clipboard.");
+            }
+
+            const clipboardContent = await getClipboardContent();
+            try {
+                // We convert the clipboard conent into an passcode of string or number depending upon isAlphaNumeric;
+                let newArray: Array<string | number> =
+                    clipboardContent.split("");
+                newArray = isAlphaNumeric
+                    ? newArray
+                    : newArray.map((num) => Number(num));
+                /**
+                 * We start pasting the clipboard content from the currentFocusedIndex with the help of below block.
+                 * Pasting of this content is stopped when the last input is reached.
+                 **/
+                const filledArray = getFilledArray(
+                    passcode,
+                    newArray,
+                    currentFocusedIndex
+                );
+
+                setPasscode(filledArray);
+
+                const newFocusedIndex = currentFocusedIndex + newArray.length;
+                if (
+                    newFocusedIndex >= 0 &&
+                    newFocusedIndex < passcode.length - 1
+                ) {
+                    setCurrentFocusedIndex(newFocusedIndex);
+                    inputRefs.current[newFocusedIndex].focus();
+                } else {
+                    setCurrentFocusedIndex(passcode.length - 1);
+                    inputRefs.current[passcode.length - 1].focus();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
         return {
             onKeyUp,
             onKeyDown,
             onFocus,
             onChange,
+            onPaste,
         };
     };
-
-    useEffect(() => {
-        if (inputRefs.current) {
-            const currentElement = inputRefs.current[currentFocusedIndex];
-            currentElement.addEventListener("paste", async () => {
-                const copyPermission = await getClipboardReadPermission();
-                if (copyPermission.state === "denied") {
-                    throw new Error("Not allowed to read clipboard.");
-                }
-
-                const clipboardContent = await getClipboardContent();
-                try {
-                    // We convert the clipboard conent into an passcode of string or number depending upon isAlphaNumeric;
-                    let newArray: Array<string | number> =
-                        clipboardContent.split("");
-                    newArray = isAlphaNumeric
-                        ? newArray
-                        : newArray.map((num) => Number(num));
-                    /**
-                     * We start pasting the clipboard content from the currentFocusedIndex with the help of below block.
-                     * Pasting of this content is stopped when the last input is reached.
-                     **/
-                    const filledArray = getFilledArray(
-                        passcode,
-                        newArray,
-                        currentFocusedIndex
-                    );
-                    setPasscode(filledArray);
-
-                    // Below we update the current focused index and also focus to the last input
-                    if (
-                        newArray.length < passcode.length &&
-                        currentFocusedIndex === 0
-                    ) {
-                        setCurrentFocusedIndex(newArray.length - 1);
-                        inputRefs.current[newArray.length - 1].focus();
-                    } else {
-                        setCurrentFocusedIndex(passcode.length - 1);
-                        inputRefs.current[passcode.length - 1].focus();
-                    }
-                } catch (err) {
-                    console.error(err);
-                }
-            });
-
-            return () => {
-                currentElement.removeEventListener("paste", () =>
-                    console.log("Removed paste listner")
-                );
-            };
-        }
-    }, [currentFocusedIndex, passcode, isAlphaNumeric]);
 
     return {
         passcode,
