@@ -4,14 +4,14 @@ import userEvent from "@testing-library/user-event";
 import usePasscode from "./usePasscode";
 
 const TestComponent = (props: { isAlphaNumeric: boolean }) => {
-    const { array, getEventHandlers, refs } = usePasscode({
+    const { passcode, getEventHandlers, refs } = usePasscode({
         count: 4,
         isAlphaNumeric: props.isAlphaNumeric,
     });
 
     return (
         <>
-            {array.map((value: string | number, index: number) => (
+            {passcode.map((value: string | number, index: number) => (
                 <input
                     ref={(el) => el && (refs.current[index] = el)}
                     type="text"
@@ -30,9 +30,9 @@ const TestComponent = (props: { isAlphaNumeric: boolean }) => {
 };
 
 describe("test basic workflow", () => {
-    it("1. test whether passing no. of inputs creates an array of equal number ", () => {
-        const { result } = renderHook(() => usePasscode({ count: 4 }));
-        expect(result.current.array).toHaveLength(4);
+    it("1. test whether passing count prop creates an array(input elements) with size count", () => {
+        render(<TestComponent isAlphaNumeric={false} />);
+        expect(screen.getAllByTestId(/index-[0-9]/)).toHaveLength(4);
     });
 
     it("2. test if the focus changes to next element when typed", async () => {

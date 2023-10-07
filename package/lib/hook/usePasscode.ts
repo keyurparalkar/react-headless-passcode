@@ -1,7 +1,6 @@
 import {
     BaseSyntheticEvent,
     KeyboardEvent,
-    useEffect,
     useRef,
     useState,
     useMemo,
@@ -22,11 +21,13 @@ type PasscodeProps = {
 const usePasscode = (props: PasscodeProps) => {
     const { count, isAlphaNumeric = false } = props;
     const filledArray = useMemo(() => Array(count).fill("", 0, count), [count]);
-    const [array, setArray] = useState(filledArray);
+    const [passcode, setPasscode] = useState(filledArray);
     const [currentFocusedIndex, setCurrentFocusedIndex] = useState(0);
     const inputRefs = useRef<Array<HTMLInputElement> | []>([]);
 
-    const isComplete = array?.every((value: string | number) => value !== "");
+    const isComplete = passcode?.every(
+        (value: string | number) => value !== ""
+    );
 
     /**
      * A function that returns the necessary event handlers based on index.
@@ -34,7 +35,7 @@ const usePasscode = (props: PasscodeProps) => {
     const getEventHandlers = (index: number) => {
         const onChange = (e: BaseSyntheticEvent) => {
             // Change the arrayValue and update only when number key is pressed
-            setArray((preValue: (string | number)[]) => {
+            setPasscode((preValue: (string | number)[]) => {
                 const newArray = [...preValue];
 
                 if (parseInt(e.target.value)) {
@@ -49,7 +50,6 @@ const usePasscode = (props: PasscodeProps) => {
 
         const onFocus = (e: BaseSyntheticEvent) => {
             setCurrentFocusedIndex(index);
-            e.target.focus();
         };
 
         const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -70,13 +70,13 @@ const usePasscode = (props: PasscodeProps) => {
                 /**
                  * Update focus only when number key is pressed
                  * We do a -2 below because we don't want the last input to update the currentFocusedIndex
-                 * If we allow it then we get array out of bound error.
+                 * If we allow it then we get passcode out of bound error.
                  * */
                 if (
                     (isAlphaNumeric
                         ? ALPHANUMERIC_REGEX.test(e.key)
                         : parseInt(e.key)) &&
-                    index <= array.length - 2
+                    index <= passcode.length - 2
                 ) {
                     setCurrentFocusedIndex(index + 1);
                     if (
@@ -92,21 +92,12 @@ const usePasscode = (props: PasscodeProps) => {
 
         // Preventing typing of any other keys except for 1 to 9 And backspace
         const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-            if (shouldPreventDefault(e.which, isAlphaNumeric, e.metaKey)) {
+            if (shouldPreventDefault(e.key, isAlphaNumeric, e.metaKey)) {
                 e.preventDefault();
             }
         };
 
-        return {
-            onKeyUp,
-            onKeyDown,
-            onFocus,
-            onChange,
-        };
-    };
-
-    useEffect(() => {
-        document.addEventListener("paste", async () => {
+        const onPaste = async (e: BaseSyntheticEvent) => {
             const copyPermission = await getClipboardReadPermission();
             if (copyPermission.state === "denied") {
                 throw new Error("Not allowed to read clipboard.");
@@ -114,7 +105,7 @@ const usePasscode = (props: PasscodeProps) => {
 
             const clipboardContent = await getClipboardContent();
             try {
-                // We convert the clipboard conent into an array of string or number depending upon isAlphaNumeric;
+                // We convert the clipboard conent into an passcode of string or number depending upon isAlphaNumeric;
                 let newArray: Array<string | number> =
                     clipboardContent.split("");
                 newArray = isAlphaNumeric
@@ -125,38 +116,41 @@ const usePasscode = (props: PasscodeProps) => {
                  * Pasting of this content is stopped when the last input is reached.
                  **/
                 const filledArray = getFilledArray(
-                    array,
+                    passcode,
                     newArray,
                     currentFocusedIndex
                 );
-                setArray(filledArray);
 
-                // Below we update the current focused index and also focus to the last input
+                setPasscode(filledArray);
+
+                const newFocusedIndex = currentFocusedIndex + newArray.length;
                 if (
-                    newArray.length < array.length &&
-                    currentFocusedIndex === 0
+                    newFocusedIndex >= 0 &&
+                    newFocusedIndex < passcode.length - 1
                 ) {
-                    setCurrentFocusedIndex(newArray.length - 1);
-                    inputRefs.current[newArray.length - 1].focus();
+                    setCurrentFocusedIndex(newFocusedIndex);
+                    inputRefs.current[newFocusedIndex].focus();
                 } else {
-                    setCurrentFocusedIndex(array.length - 1);
-                    inputRefs.current[array.length - 1].focus();
+                    setCurrentFocusedIndex(passcode.length - 1);
+                    inputRefs.current[passcode.length - 1].focus();
                 }
             } catch (err) {
                 console.error(err);
             }
-        });
-
-        return () => {
-            document.removeEventListener("paste", () =>
-                console.log("Removed paste listner")
-            );
         };
-    }, [currentFocusedIndex, array, isAlphaNumeric]);
+
+        return {
+            onKeyUp,
+            onKeyDown,
+            onFocus,
+            onChange,
+            onPaste,
+        };
+    };
 
     return {
-        array,
-        setArray,
+        passcode,
+        setPasscode,
         currentFocusedIndex,
         setCurrentFocusedIndex,
         getEventHandlers,
