@@ -1,6 +1,6 @@
 {
   "name": "react-headless-passcode",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A headless UI for building easy to use passcode component",
   "keywords": [
     "passcode",
@@ -29,7 +29,8 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "test": "jest"
+    "test": "jest",
+    "release": "standard-version"
   },
   "sideEffects": false,
   "author": "Keyur Paralkar",
@@ -50,6 +51,7 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.2",
+    "standard-version": "^9.5.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"
   },
