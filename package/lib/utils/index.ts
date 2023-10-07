@@ -1,43 +1,37 @@
 export const ALPHANUMERIC_REGEX = /^[a-z0-9]$/i;
 
 export const shouldPreventDefault = (
-  keyCode: number,
-  isAlphaNumeric: boolean = false,
-  isMeta: boolean = false
+    key: string,
+    isAlphaNumeric: boolean = false,
+    isMeta: boolean = false
 ) => {
-  const isAlphabet = keyCode >= 64 && keyCode <= 90;
+    const parsed = Number(key);
 
-  // Below flag also checks if the typeed key is from numpad
-  const isNumeric =
-    (keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105);
+    // By default we only allow numbers to be pressed = DONE
+    if (parsed) return false;
 
-  //Crtl + v:
-  if (isMeta && keyCode === 86) {
-    return false;
-  }
+    // Crtl + V
+    if (isMeta && key === "v") return false;
 
-  // By default we only allow numbers to be pressed
-  if (isNumeric) return false;
+    // Allow Backspace
+    if (key === "Backspace") return false;
 
-  // We only allow alphabets to be pressed when the isAplhaNumeric flag is true
-  if (isAlphabet && isAlphaNumeric) return false;
+    // We only allow alphabets to be pressed when the isAplhaNumeric flag is true = DONE
+    if (isAlphaNumeric && isNaN(parsed)) {
+        return false;
+    }
 
-  // Backspace
-  if (keyCode === 8) {
-    return false;
-  }
-
-  return true;
+    return true;
 };
 
 export const getClipboardReadPermission = () => {
-  return navigator.permissions.query({
-    name: "clipboard-read" as PermissionName,
-  });
+    return navigator.permissions.query({
+        name: "clipboard-read" as PermissionName,
+    });
 };
 
 export const getClipboardContent = () => {
-  return navigator.clipboard.readText();
+    return navigator.clipboard.readText();
 };
 
 /**
@@ -48,18 +42,19 @@ export const getClipboardContent = () => {
  * The array before the focused index will be filled with existing values.
  */
 export const getFilledArray = (
-  arr: (number | string)[],
-  pastingArr: (number | string)[],
-  currentFocusedIndex: number
+    arr: (number | string)[],
+    pastingArr: (number | string)[],
+    currentFocusedIndex: number
 ) => {
-  const lastIndex = arr.length - 1;
+    const lastIndex = arr.length - 1;
 
-  if (currentFocusedIndex > 0) {
-    const remainingPlaces = lastIndex - currentFocusedIndex;
-    const partialArray = pastingArr.slice(0, remainingPlaces + 1);
-    return [...arr.slice(0, currentFocusedIndex), ...partialArray];
-  } else {
-    // Starts pasting the values in the array from 0th index
-    return [...pastingArr, ...arr.slice(pastingArr.length - 1, lastIndex)];
-  }
+    if (currentFocusedIndex > 0) {
+        for (let i = currentFocusedIndex; i <= lastIndex; i++) {
+            arr[i] = pastingArr[i - currentFocusedIndex] ?? "";
+        }
+        return arr;
+    } else {
+        // Starts pasting the values in the array from 0th index
+        return [...pastingArr, ...arr.slice(pastingArr.length - 1, lastIndex)];
+    }
 };
