@@ -48,9 +48,32 @@ describe("test basic workflow", () => {
         await waitFor(() => {
             expect(secondtInput).toHaveFocus();
         });
+
+        // Verify that the value of first input is 1
+        expect(firstInput).toHaveValue("1");
     });
 
-    it("3. test if the focus changes to previous element when backspaced", async () => {
+
+    it("3. test if the focus changes to next element when the zero digit is typed", async () => {
+        render(<TestComponent isAlphaNumeric={false} />);
+        // focus on the first input
+        const firstInput: HTMLInputElement = screen.getByTestId("index-0");
+        firstInput.focus();
+        expect(firstInput).toHaveFocus();
+
+        //Type in first input and check the focus of next input
+        userEvent.type(firstInput, "0");
+        const secondtInput: HTMLInputElement = screen.getByTestId("index-1");
+        await waitFor(() => {
+            expect(secondtInput).toHaveFocus();
+        });
+
+        // Verify that the value of first input is 0
+        expect(firstInput).toHaveValue("0");
+    });
+
+
+    it("4. test if the focus changes to previous element when backspaced", async () => {
         render(<TestComponent isAlphaNumeric={false} />);
         // focus on the first input
         const firstInput: HTMLInputElement = screen.getByTestId("index-0");
@@ -58,9 +81,9 @@ describe("test basic workflow", () => {
 
         //Type in first input and check the focus of next input
         userEvent.type(firstInput, "1");
-        const secondtInput: HTMLInputElement = screen.getByTestId("index-1");
+        const secondInput: HTMLInputElement = screen.getByTestId("index-1");
         await waitFor(() => {
-            expect(secondtInput).toHaveFocus();
+            expect(secondInput).toHaveFocus();
         });
 
         //Backspace and observe focus shift
@@ -68,5 +91,32 @@ describe("test basic workflow", () => {
         await waitFor(() => {
             expect(firstInput).toHaveFocus();
         });
+
+        // Verify that the value of second input is empty
+        expect(secondInput).toHaveValue("");
+    });
+
+
+    it("5. test if the focus changes to previous element when backspaced over the zero digit", async () => {
+        render(<TestComponent isAlphaNumeric={false} />);
+        // focus on the first input
+        const firstInput: HTMLInputElement = screen.getByTestId("index-0");
+        firstInput.focus();
+
+        //Type in first input and check the focus of next input
+        userEvent.type(firstInput, "0");
+        const secondInput: HTMLInputElement = screen.getByTestId("index-1");
+        await waitFor(() => {
+            expect(secondInput).toHaveFocus();
+        });
+
+        //Backspace and observe focus shift
+        userEvent.keyboard("{Backspace}");
+        await waitFor(() => {
+            expect(firstInput).toHaveFocus();
+        });
+
+        // Verify that the value of second input is empty
+        expect(secondInput).toHaveValue("");
     });
 });

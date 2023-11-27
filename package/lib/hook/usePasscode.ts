@@ -10,6 +10,7 @@ import {
     getClipboardContent,
     getClipboardReadPermission,
     getFilledArray,
+    isNumeric,
     shouldPreventDefault,
 } from "../utils";
 
@@ -75,7 +76,7 @@ const usePasscode = (props: PasscodeProps) => {
                 if (
                     (isAlphaNumeric
                         ? ALPHANUMERIC_REGEX.test(e.key)
-                        : parseInt(e.key)) &&
+                        : isNumeric(e.key)) &&
                     index <= passcode.length - 2
                 ) {
                     setCurrentFocusedIndex(index + 1);
