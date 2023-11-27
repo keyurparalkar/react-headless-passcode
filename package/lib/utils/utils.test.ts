@@ -5,6 +5,9 @@ describe("test shouldPreventDefault", () => {
         let key = "1";
         expect(shouldPreventDefault(key)).toBeFalsy();
 
+        key = "0";
+        expect(shouldPreventDefault(key)).toBeFalsy();
+
         key = "v";
         expect(shouldPreventDefault(key, false, true)).toBeFalsy();
 

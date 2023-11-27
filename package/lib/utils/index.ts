@@ -1,14 +1,17 @@
 export const ALPHANUMERIC_REGEX = /^[a-z0-9]$/i;
 
+
+export const isNumeric = (key: string) => !isNaN(Number(key))
+
 export const shouldPreventDefault = (
     key: string,
     isAlphaNumeric: boolean = false,
     isMeta: boolean = false
 ) => {
-    const parsed = Number(key);
-
+    // Check if the key is a number
+    const isKeyNumeric = isNumeric(key);
     // By default we only allow numbers to be pressed = DONE
-    if (parsed) return false;
+    if (isKeyNumeric) return false;
 
     // Crtl + V
     if (isMeta && key === "v") return false;
@@ -17,7 +20,7 @@ export const shouldPreventDefault = (
     if (key === "Backspace") return false;
 
     // We only allow alphabets to be pressed when the isAplhaNumeric flag is true = DONE
-    if (isAlphaNumeric && isNaN(parsed)) {
+    if (isAlphaNumeric && !isKeyNumeric) {
         return false;
     }
 
